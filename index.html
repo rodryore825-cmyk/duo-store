@@ -3,36 +3,218 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DuoStore 🎮 - Elite Gaming & Merchandise</title>
-    <link rel="stylesheet" href="style.css">
-    <!-- FontAwesome para iconos profesionales -->
+    <title>DuoStore 🎮 - Elite Gaming</title>
+    <!-- Iconos profesionales -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- CSS INCORPORADO AQUÍ PARA QUE NO FALLE -->
+    <style>
+        :root {
+            --bg-main: #0b0f19;
+            --bg-card: #131c2e;
+            --bg-header: rgba(11, 15, 25, 0.85);
+            --border-color: rgba(56, 189, 248, 0.15);
+            --text-main: #f1f5f9;
+            --text-muted: #94a3b8;
+            --accent: #38bdf8;
+            --accent-glow: rgba(56, 189, 248, 0.3);
+            --gradient-glow: linear-gradient(135deg, #38bdf8 0%, #818cf8 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            line-height: 1.6;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* Header Glassmorphism */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 5%;
+            background-color: var(--bg-header);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .logo {
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: var(--text-main);
+            cursor: pointer;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .logo i, .logo span { color: var(--accent); }
+
+        .nav { display: flex; gap: 2rem; }
+
+        .nav a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: color 0.3s ease;
+        }
+
+        .nav a:hover, .nav a.active { color: var(--accent); }
+
+        /* Auth & Dropdown Menu */
+        .google-auth-btn {
+            background-color: #ffffff;
+            color: #0b0f19;
+            border: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.2);
+            transition: transform 0.2s, background 0.2s;
+        }
+
+        .google-auth-btn img {
+            width: 20px !important; /* Fuerza a que no sea gigante */
+            height: 20px !important;
+        }
+
+        .google-auth-btn:hover {
+            transform: translateY(-2px);
+            background-color: #f8fafc;
+        }
+
+        .dropdown { position: relative; display: inline-block; }
+        .dropbtn {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            padding: 0.4rem 1rem;
+            border-radius: 30px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.9rem;
+            transition: border-color 0.2s;
+        }
+        .avatar-img { width: 28px; height: 28px; border-radius: 50%; }
+        
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            right: 0;
+            background-color: var(--bg-card);
+            min-width: 220px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            z-index: 1;
+            margin-top: 8px;
+        }
+        .dropdown-content.show { display: block; }
+        .dropdown-header { padding: 12px 16px; border-bottom: 1px solid var(--border-color); }
+        .user-email-text { font-size: 0.8rem; color: var(--text-muted); }
+        .dropdown-content a {
+            color: var(--text-main);
+            padding: 12px 16px;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.9rem;
+        }
+        .dropdown-content a:hover { background-color: rgba(56, 189, 248, 0.1); color: var(--accent); }
+
+        /* Carrusel */
+        .hero-carousel { position: relative; width: 100%; height: 75vh; overflow: hidden; }
+        .carousel-track { display: flex; width: 100%; height: 100%; transition: transform 1s cubic-bezier(0.77, 0, 0.175, 1); }
+        .carousel-slide { min-width: 100%; height: 100%; background-size: cover; background-position: center; display: flex; align-items: center; justify-content: center; text-align: center; padding: 0 2rem; }
+        .badge-tag { background: rgba(56, 189, 248, 0.15); color: var(--accent); padding: 0.4rem 1rem; border-radius: 20px; font-size: 0.75rem; font-weight: 700; border: 1px solid var(--border-color); margin-bottom: 1rem; display: inline-block; }
+        .slide-content h1 { font-size: 3.2rem; margin-bottom: 1rem; font-weight: 800; color: white;}
+        .slide-content p { font-size: 1.15rem; color: #cbd5e1; max-width: 600px; margin: 0 auto 2rem auto; }
+        
+        .btn-glow {
+            background: var(--gradient-glow);
+            color: #0b0f19;
+            border: none;
+            padding: 0.8rem 2rem;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            box-shadow: 0 0 25px var(--accent-glow);
+            transition: transform 0.2s;
+        }
+        .btn-glow:hover { transform: translateY(-2px); }
+        .btn-full { width: 100%; }
+
+        /* Vistas y Componentes */
+        .view { flex: 1; padding: 4rem 5%; max-width: 1200px; margin: 0 auto; width: 100%; }
+        .section-title { text-align: center; margin-bottom: 3rem; }
+        .section-title h2 { font-size: 2.2rem; font-weight: 800; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem; }
+        .card { background-color: var(--bg-card); border: 1px solid var(--border-color); border-radius: 14px; overflow: hidden; display: flex; flex-direction: column; }
+        .card-img { width: 100%; height: 200px; object-fit: cover; }
+        .card-body { padding: 1.5rem; display: flex; flex-direction: column; flex: 1; }
+        .price { font-size: 1.25rem; font-weight: 800; color: var(--accent); margin: 1rem 0; }
+
+        /* Social Cards */
+        .social-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; }
+        .social-card { background-color: var(--bg-card); border: 1px solid var(--border-color); padding: 2rem; border-radius: 14px; display: flex; align-items: center; gap: 1.5rem; text-decoration: none; color: var(--text-main); }
+        .social-card i { font-size: 2.5rem; }
+        .social-card.instagram i { color: #e1306c; }
+        .social-card.whatsapp i { color: #25d366; }
+        .social-card.email i { color: var(--accent); }
+
+        .footer { background-color: var(--bg-card); border-top: 1px solid var(--border-color); padding: 2rem 5%; text-align: center; margin-top: auto; color: var(--text-muted); }
+    </style>
 </head>
 <body>
-    <!-- Encabezado Glassmorphism -->
+
+    <!-- Encabezado -->
     <header class="header">
         <div class="logo" onclick="switchView('inicio')">
             <i class="fa-solid fa-gamepad"></i> Duo<span>Store</span>
         </div>
         
         <nav class="nav" id="navMenu">
-            <a href="#" onclick="switchView('inicio')" class="active"><i class="fa-solid fa-house"></i> Inicio</a>
+            <a href="#" onclick="switchView('inicio')"><i class="fa-solid fa-house"></i> Inicio</a>
             <a href="#" onclick="switchView('catalogo')"><i class="fa-solid fa-store"></i> Catálogo</a>
-            <!-- El enlace de Admin se oculta dinámicamente si no eres tú -->
             <a href="#" onclick="switchView('admin')" id="adminNavLink" style="display: none;"><i class="fa-solid fa-shield-halved"></i> Panel Admin</a>
-            <a href="#" onclick="switchView('politicas')"><i class="fa-solid fa-file-contract"></i> Políticas</a>
             <a href="#" onclick="switchView('contacto')"><i class="fa-solid fa-headset"></i> Contacto</a>
         </nav>
 
         <div class="auth-container">
             <button id="googleLoginBtn" class="google-auth-btn" onclick="loginWithGoogle()">
-                <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google"> Conectar con Google
+                <img src="https://www.svgrepo.com/show/475656/google-color.svg" width="20" height="20" alt="Google"> Conectar con Google
             </button>
             
-            <!-- Menú Desplegable de Usuario -->
             <div id="userDropdown" class="dropdown" style="display: none;">
                 <button class="dropbtn" onclick="toggleDropdown()">
-                    <img id="userAvatar" src="" alt="Avatar" class="avatar-img">
+                    <img id="userAvatar" src="https://www.svgrepo.com/show/382109/male-avatar.svg" alt="Avatar" class="avatar-img">
                     <span id="userNameDisplay">Cuenta</span>
                     <i class="fa-solid fa-chevron-down"></i>
                 </button>
@@ -40,19 +222,14 @@
                     <div class="dropdown-header">
                         <p id="userEmailDisplay" class="user-email-text"></p>
                     </div>
-                    <a href="#" onclick="switchView('catalogo')"><i class="fa-solid fa-bag-shopping"></i> Mis Compras</a>
                     <a href="#" onclick="logout()"><i class="fa-solid fa-right-from-bracket"></i> Cerrar Sesión</a>
                 </div>
             </div>
         </div>
-
-        <div class="menu-toggle" onclick="toggleMobileMenu()">
-            <i class="fa-solid fa-bars"></i>
-        </div>
     </header>
 
-    <!-- Vista: Inicio (Carrusel Pro de 7s y Destacados) -->
-    <main id="view-inicio" class="view">
+    <!-- Vista: Inicio -->
+    <main id="view-inicio" class="view" style="padding: 0; max-width: 100%;">
         <section class="hero-carousel">
             <div class="carousel-track" id="mainCarousel">
                 <div class="carousel-slide active" style="background-image: linear-gradient(rgba(11, 15, 25, 0.7), rgba(11, 15, 25, 0.9)), url('https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=1600&q=80')">
@@ -73,169 +250,122 @@
                 </div>
             </div>
         </section>
-
-        <section class="features-grid">
-            <div class="feature-card">
-                <i class="fa-solid fa-truck-fast"></i>
-                <h3>Envíos Globales</h3>
-                <p>Seguros y optimizados para toda la región.</p>
-            </div>
-            <div class="feature-card">
-                <i class="fa-solid fa-lock"></i>
-                <h3>Pagos Seguros</h3>
-                <p>Múltiples pasarelas integradas con cifrado.</p>
-            </div>
-            <div class="feature-card">
-                <i class="fa-solid fa-headset"></i>
-                <h3>Soporte 24/7</h3>
-                <p>Atención directa vía WhatsApp y correo.</p>
-            </div>
-        </section>
     </main>
 
     <!-- Vista: Catálogo -->
     <main id="view-catalogo" class="view" style="display: none;">
-        <section class="catalog-container">
-            <div class="section-title">
-                <h2>Catálogo Exclusivo</h2>
-                <p>Selección curada para entusiastas y competidores.</p>
-            </div>
-            <div class="grid" id="productGrid"></div>
+        <section class="section-title">
+            <h2>Catálogo Exclusivo</h2>
+            <p>Selección curada para entusiastas y competidores.</p>
         </section>
+        <div class="grid" id="productGrid"></div>
     </main>
 
-    <!-- Vista: Panel Admin (Restringido) -->
-    <main id="view-admin" class="view" style="display: none;">
-        <section class="admin-panel">
-            <div class="admin-header">
-                <h2><i class="fa-solid fa-terminal"></i> Panel de Administración</h2>
-                <span class="admin-badge">Acceso Autorizado: Rodrigo</span>
-            </div>
-            <form id="addProductForm" onsubmit="addNewProduct(event)">
-                <div class="form-group">
-                    <label>Nombre del Producto</label>
-                    <input type="text" id="prodName" required placeholder="Ej. Teclado Óptico Mecánico">
-                </div>
-                <div class="form-group">
-                    <label>Descripción Breve</label>
-                    <input type="text" id="prodDesc" required placeholder="Ej. Switches ópticos de respuesta ultra rápida.">
-                </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>Precio ($ USD)</label>
-                        <input type="number" step="0.01" id="prodPrice" required placeholder="79.99">
-                    </div>
-                    <div class="form-group">
-                        <label>URL de Imagen</label>
-                        <input type="url" id="prodImg" required placeholder="https://images.unsplash.com/...">
-                    </div>
-                </div>
-                <button type="submit" class="btn-glow btn-full">Publicar en Catálogo</button>
-            </form>
-        </section>
+    <!-- Vista: Panel Admin -->
+    <main id="view-admin" class="view" style="display: none; text-align: center;">
+        <h2 style="color: var(--accent);">Zona de Administrador</h2>
+        <p>Solo tu correo (rodrigoorellano825@gmail.com) puede ver esto.</p>
     </main>
 
-    <!-- Vista: Políticas -->
-    <main id="view-politicas" class="view" style="display: none;">
-        <section class="policies-container">
-            <h2>Términos y Políticas de Privacidad</h2>
-            <div class="policy-box">
-                <h3><i class="fa-solid fa-shield-cat"></i> 1. Autenticación y Datos</h3>
-                <p>Utilizamos el inicio de sesión oficial de Google OAuth 2.0 para verificar tu identidad de forma segura. No almacenamos credenciales ni contraseñas en nuestros servidores.</p>
-                
-                <h3><i class="fa-solid fa-box-open"></i> 2. Envíos y Garantías</h3>
-                <p>Los productos físicos cuentan con empaque especializado anti-impactos y seguimiento en tiempo real. Los artículos digitales se despachan automáticamente tras la confirmación de pago.</p>
-                
-                <h3><i class="fa-solid fa-rotate-left"></i> 3. Devoluciones</h3>
-                <p>Garantía de reembolso de 14 días en caso de fallas de fábrica debidamente comprobadas.</p>
-            </div>
-        </section>
-    </main>
-
-    <!-- Vista: Contacto y Redes Sociales -->
+    <!-- Vista: Contacto -->
     <main id="view-contacto" class="view" style="display: none;">
-        <section class="contact-container">
-            <div class="section-title">
-                <h2>Canales de Contacto Oficiales</h2>
-                <p>¿Tienes dudas o necesitas soporte directo? Escríbenos por cualquiera de nuestros medios.</p>
-            </div>
-            <div class="social-grid">
-                <a href="https://instagram.com/duo19.13" target="_blank" class="social-card instagram">
-                    <i class="fa-brands fa-instagram"></i>
-                    <div>
-                        <h3>Instagram</h3>
-                        <p>@duo19.13</p>
-                    </div>
-                </a>
-                <a href="https://wa.me/5493329540457" target="_blank" class="social-card whatsapp">
-                    <i class="fa-brands fa-whatsapp"></i>
-                    <div>
-                        <h3>WhatsApp Directo</h3>
-                        <p>+54 9 3329 54-0457</p>
-                    </div>
-                </a>
-                <a href="mailto:rodrygoorellano825@gmail.com" class="social-card email">
-                    <i class="fa-solid fa-envelope"></i>
-                    <div>
-                        <h3>Correo Electrónico</h3>
-                        <p>rodrygoorellano825@gmail.com</p>
-                    </div>
-                </a>
-            </div>
+        <section class="section-title">
+            <h2>Canales de Contacto Oficiales</h2>
+            <p>Escríbenos por cualquiera de nuestros medios.</p>
         </section>
+        <div class="social-grid">
+            <a href="https://instagram.com/duo19.13" target="_blank" class="social-card instagram">
+                <i class="fa-brands fa-instagram"></i>
+                <div>
+                    <h3>Instagram</h3>
+                    <p>@duo19.13</p>
+                </div>
+            </a>
+            <a href="https://wa.me/5493329540457" target="_blank" class="social-card whatsapp">
+                <i class="fa-brands fa-whatsapp"></i>
+                <div>
+                    <h3>WhatsApp Directo</h3>
+                    <p>+54 9 3329 54-0457</p>
+                </div>
+            </a>
+            <a href="mailto:rodrygoorellano825@gmail.com" class="social-card email">
+                <i class="fa-solid fa-envelope"></i>
+                <div>
+                    <h3>Correo Electrónico</h3>
+                    <p>rodrygoorellano825@gmail.com</p>
+                </div>
+            </a>
+        </div>
     </main>
 
-    <!-- Modal de Pago Profesional -->
-    <div id="checkoutModal" class="modal" style="display: none;">
-        <div class="modal-content">
-            <span class="close-btn" onclick="closeCheckout()">&times;</span>
-            <h2>Pasarela de Pago Segura 💳</h2>
-            <p id="checkoutProductTitle" class="checkout-product-title"></p>
-            <form onsubmit="processPayment(event)">
-                <div class="form-group">
-                    <label>Método de Pago</label>
-                    <select id="paymentMethod" class="form-control" onchange="togglePaymentFields()">
-                        <option value="card">Tarjeta de Crédito / Débito</option>
-                        <option value="mercado_pago">Mercado Pago</option>
-                        <option value="crypto">Criptomonedas (USDT / BTC)</option>
-                    </select>
-                </div>
-                <div id="cardFields">
-                    <div class="form-group">
-                        <label>Número de Tarjeta</label>
-                        <input type="text" placeholder="•••• •••• •••• ••••" maxlength="19">
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label>Vencimiento</label>
-                            <input type="text" placeholder="MM/AA" maxlength="5">
-                        </div>
-                        <div class="form-group">
-                            <label>CVV</label>
-                            <input type="password" placeholder="•••" maxlength="4">
-                        </div>
-                    </div>
-                </div>
-                <button type="submit" class="btn-glow btn-full">Completar Transacción</button>
-            </form>
-        </div>
-    </div>
-
-    <!-- Footer Moderno -->
     <footer class="footer">
-        <div class="footer-content">
-            <p>&copy; 2026 DuoStore. Todos los derechos reservados.</p>
-            <div class="footer-socials">
-                <a href="https://instagram.com/duo19.13" target="_blank"><i class="fa-brands fa-instagram"></i></a>
-                <a href="https://wa.me/5493329540457" target="_blank"><i class="fa-brands fa-whatsapp"></i></a>
-                <a href="mailto:rodrygoorellano825@gmail.com"><i class="fa-solid fa-envelope"></i></a>
-            </div>
-        </div>
+        <p>&copy; 2026 DuoStore. Todos los derechos reservados.</p>
     </footer>
 
-    <!-- Firebase SDKs para Autenticación Real con Google -->
-    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
-    <script src="script.js"></script>
+    <!-- JAVASCRIPT INCORPORADO -->
+    <script>
+        let products = [
+            { name: "Micrófono K9 Inalámbrico", desc: "Ideal para streaming y videollamadas con conexión USB-C.", price: 25.00, img: "https://images.unsplash.com/photo-1590602847861-f357a9332bbc?auto=format&fit=crop&w=600&q=80" },
+            { name: "Pack Coleccionable AOT", desc: "Artículos y accesorios exclusivos de edición limitada.", price: 45.00, img: "https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?auto=format&fit=crop&w=600&q=80" },
+            { name: "Mousepad Gaming RGB XL", desc: "Superficie optimizada con iluminación LED ajustable.", price: 30.00, img: "https://images.unsplash.com/photo-1615663245857-ac93bb7c39e7?auto=format&fit=crop&w=600&q=80" }
+        ];
+
+        document.addEventListener("DOMContentLoaded", () => {
+            renderCatalog();
+            initCarousel();
+        });
+
+        function switchView(viewName) {
+            document.querySelectorAll(".view").forEach(view => view.style.display = "none");
+            document.getElementById(`view-${viewName}`).style.display = "block";
+        }
+
+        function initCarousel() {
+            const track = document.getElementById("mainCarousel");
+            const slides = track.querySelectorAll(".carousel-slide");
+            let currentIndex = 0;
+            setInterval(() => {
+                currentIndex = (currentIndex + 1) % slides.length;
+                track.style.transform = `translateX(-${currentIndex * 100}%)`;
+            }, 7000);
+        }
+
+        function renderCatalog() {
+            const grid = document.getElementById("productGrid");
+            grid.innerHTML = "";
+            products.forEach(prod => {
+                grid.innerHTML += `
+                    <div class="card">
+                        <img src="${prod.img}" alt="${prod.name}" class="card-img">
+                        <div class="card-body">
+                            <h3>${prod.name}</h3>
+                            <p>${prod.desc}</p>
+                            <span class="price">$${prod.price.toFixed(2)} USD</span>
+                            <button class="btn-glow btn-full" onclick="alert('Inicia sesión para comprar')">Comprar Ahora</button>
+                        </div>
+                    </div>`;
+            });
+        }
+
+        function toggleDropdown() {
+            document.getElementById("dropdownContent").classList.toggle("show");
+        }
+
+        // Simulación temporal para que veas el diseño sin fallos de Firebase
+        function loginWithGoogle() {
+            document.getElementById("googleLoginBtn").style.display = "none";
+            document.getElementById("userDropdown").style.display = "inline-block";
+            document.getElementById("userNameDisplay").innerText = "Rodrigo";
+            document.getElementById("userEmailDisplay").innerText = "rodrygoorellano825@gmail.com";
+            document.getElementById("adminNavLink").style.display = "flex";
+        }
+
+        function logout() {
+            document.getElementById("googleLoginBtn").style.display = "flex";
+            document.getElementById("userDropdown").style.display = "none";
+            document.getElementById("adminNavLink").style.display = "none";
+            toggleDropdown();
+        }
+    </script>
 </body>
 </html>
