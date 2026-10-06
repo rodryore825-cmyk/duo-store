@@ -3,146 +3,239 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DuoStore 🎮 - Gaming & Merchandise</title>
+    <title>DuoStore 🎮 - Elite Gaming & Merchandise</title>
     <link rel="stylesheet" href="style.css">
+    <!-- FontAwesome para iconos profesionales -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-    <!-- Encabezado -->
+    <!-- Encabezado Glassmorphism -->
     <header class="header">
-        <div class="logo" onclick="switchView('inicio')">DuoStore 🎮</div>
-        <nav class="nav">
-            <a href="#" onclick="switchView('inicio')">Inicio</a>
-            <a href="#" onclick="switchView('catalogo')">Catálogo</a>
-            <a href="#" onclick="switchView('admin')">Panel Admin</a>
-            <a href="#" onclick="switchView('politicas')">Políticas</a>
+        <div class="logo" onclick="switchView('inicio')">
+            <i class="fa-solid fa-gamepad"></i> Duo<span>Store</span>
+        </div>
+        
+        <nav class="nav" id="navMenu">
+            <a href="#" onclick="switchView('inicio')" class="active"><i class="fa-solid fa-house"></i> Inicio</a>
+            <a href="#" onclick="switchView('catalogo')"><i class="fa-solid fa-store"></i> Catálogo</a>
+            <!-- El enlace de Admin se oculta dinámicamente si no eres tú -->
+            <a href="#" onclick="switchView('admin')" id="adminNavLink" style="display: none;"><i class="fa-solid fa-shield-halved"></i> Panel Admin</a>
+            <a href="#" onclick="switchView('politicas')"><i class="fa-solid fa-file-contract"></i> Políticas</a>
+            <a href="#" onclick="switchView('contacto')"><i class="fa-solid fa-headset"></i> Contacto</a>
         </nav>
-        <div class="auth-section">
-            <button id="googleLoginBtn" class="google-btn" onclick="loginWithGoogle()">
-                <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google"> Entrar con Google
+
+        <div class="auth-container">
+            <button id="googleLoginBtn" class="google-auth-btn" onclick="loginWithGoogle()">
+                <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google"> Conectar con Google
             </button>
-            <div id="userProfile" class="user-profile" style="display: none;">
-                <span id="userName">Usuario</span>
-                <button class="logout-btn" onclick="logout()">Salir</button>
+            
+            <!-- Menú Desplegable de Usuario -->
+            <div id="userDropdown" class="dropdown" style="display: none;">
+                <button class="dropbtn" onclick="toggleDropdown()">
+                    <img id="userAvatar" src="" alt="Avatar" class="avatar-img">
+                    <span id="userNameDisplay">Cuenta</span>
+                    <i class="fa-solid fa-chevron-down"></i>
+                </button>
+                <div id="dropdownContent" class="dropdown-content">
+                    <div class="dropdown-header">
+                        <p id="userEmailDisplay" class="user-email-text"></p>
+                    </div>
+                    <a href="#" onclick="switchView('catalogo')"><i class="fa-solid fa-bag-shopping"></i> Mis Compras</a>
+                    <a href="#" onclick="logout()"><i class="fa-solid fa-right-from-bracket"></i> Cerrar Sesión</a>
+                </div>
             </div>
+        </div>
+
+        <div class="menu-toggle" onclick="toggleMobileMenu()">
+            <i class="fa-solid fa-bars"></i>
         </div>
     </header>
 
-    <!-- Vista: Inicio (Hero y Carrusel Principal) -->
+    <!-- Vista: Inicio (Carrusel Pro de 7s y Destacados) -->
     <main id="view-inicio" class="view">
         <section class="hero-carousel">
             <div class="carousel-track" id="mainCarousel">
-                <div class="carousel-slide active" style="background-image: linear-gradient(rgba(15, 23, 42, 0.6), rgba(15, 23, 42, 0.8)), url('https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=1200&q=80')">
+                <div class="carousel-slide active" style="background-image: linear-gradient(rgba(11, 15, 25, 0.7), rgba(11, 15, 25, 0.9)), url('https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=1600&q=80')">
                     <div class="slide-content">
+                        <span class="badge-tag">NUEVA GENERACIÓN</span>
                         <h1>Nivel Up Your Setup</h1>
-                        <p>Los mejores accesorios y equipo profesional para gamers.</p>
+                        <p>Hardware de alto rendimiento, periféricos profesionales y coleccionables únicos.</p>
+                        <button class="btn-glow" onclick="switchView('catalogo')">Explorar Tienda</button>
                     </div>
                 </div>
-                <div class="carousel-slide" style="background-image: linear-gradient(rgba(15, 23, 42, 0.6), rgba(15, 23, 42, 0.8)), url('https://images.unsplash.com/photo-1612287233202-b51e3ed61f15?auto=format&fit=crop&w=1200&q=80')">
+                <div class="carousel-slide" style="background-image: linear-gradient(rgba(11, 15, 25, 0.7), rgba(11, 15, 25, 0.9)), url('https://images.unsplash.com/photo-1612287233202-b51e3ed61f15?auto=format&fit=crop&w=1600&q=80')">
                     <div class="slide-content">
+                        <span class="badge-tag">EDICIÓN LIMITADA</span>
                         <h1>Merch Oficial Exclusiva</h1>
-                        <p>Coleccionables, indumentaria y figuras de edición limitada.</p>
+                        <p>Lleva tu pasión por el gaming al siguiente nivel con nuestra indumentaria.</p>
+                        <button class="btn-glow" onclick="switchView('catalogo')">Ver Colección</button>
                     </div>
                 </div>
             </div>
-            <div class="carousel-indicators" id="carouselIndicators"></div>
+        </section>
+
+        <section class="features-grid">
+            <div class="feature-card">
+                <i class="fa-solid fa-truck-fast"></i>
+                <h3>Envíos Globales</h3>
+                <p>Seguros y optimizados para toda la región.</p>
+            </div>
+            <div class="feature-card">
+                <i class="fa-solid fa-lock"></i>
+                <h3>Pagos Seguros</h3>
+                <p>Múltiples pasarelas integradas con cifrado.</p>
+            </div>
+            <div class="feature-card">
+                <i class="fa-solid fa-headset"></i>
+                <h3>Soporte 24/7</h3>
+                <p>Atención directa vía WhatsApp y correo.</p>
+            </div>
         </section>
     </main>
 
-    <!-- Vista: Catálogo de Productos -->
+    <!-- Vista: Catálogo -->
     <main id="view-catalogo" class="view" style="display: none;">
         <section class="catalog-container">
-            <h2>Catálogo Disponible</h2>
-            <div class="grid" id="productGrid">
-                <!-- Los productos se cargan dinámicamente (incluyendo los del admin) -->
+            <div class="section-title">
+                <h2>Catálogo Exclusivo</h2>
+                <p>Selección curada para entusiastas y competidores.</p>
             </div>
+            <div class="grid" id="productGrid"></div>
         </section>
     </main>
 
-    <!-- Vista: Panel de Administración -->
+    <!-- Vista: Panel Admin (Restringido) -->
     <main id="view-admin" class="view" style="display: none;">
         <section class="admin-panel">
-            <h2>Panel de Administración 🛠️</h2>
-            <p class="admin-subtitle">Agrega nuevos productos al catálogo en tiempo real.</p>
+            <div class="admin-header">
+                <h2><i class="fa-solid fa-terminal"></i> Panel de Administración</h2>
+                <span class="admin-badge">Acceso Autorizado: Rodrigo</span>
+            </div>
             <form id="addProductForm" onsubmit="addNewProduct(event)">
                 <div class="form-group">
-                    <label>Nombre del Producto:</label>
-                    <input type="text" id="prodName" required placeholder="Ej. Teclado Mecánico RGB">
+                    <label>Nombre del Producto</label>
+                    <input type="text" id="prodName" required placeholder="Ej. Teclado Óptico Mecánico">
                 </div>
                 <div class="form-group">
-                    <label>Descripción:</label>
-                    <input type="text" id="prodDesc" required placeholder="Ej. Switches Blue, formato TKL.">
+                    <label>Descripción Breve</label>
+                    <input type="text" id="prodDesc" required placeholder="Ej. Switches ópticos de respuesta ultra rápida.">
                 </div>
-                <div class="form-group">
-                    <label>Precio ($ USD):</label>
-                    <input type="number" id="prodPrice" required placeholder="59.99">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Precio ($ USD)</label>
+                        <input type="number" step="0.01" id="prodPrice" required placeholder="79.99">
+                    </div>
+                    <div class="form-group">
+                        <label>URL de Imagen</label>
+                        <input type="url" id="prodImg" required placeholder="https://images.unsplash.com/...">
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label>URL de Imagen (para carrusel opcional):</label>
-                    <input type="url" id="prodImg" required placeholder="https://imagen.com/foto.jpg">
-                </div>
-                <button type="submit" class="btn-primary">Guardar Producto</button>
+                <button type="submit" class="btn-glow btn-full">Publicar en Catálogo</button>
             </form>
         </section>
     </main>
 
-    <!-- Vista: Políticas y Términos -->
+    <!-- Vista: Políticas -->
     <main id="view-politicas" class="view" style="display: none;">
         <section class="policies-container">
-            <h2>Políticas de Privacidad y Compra</h2>
+            <h2>Términos y Políticas de Privacidad</h2>
             <div class="policy-box">
-                <h3>1. Privacidad de Datos</h3>
-                <p>Tus datos de inicio de sesión mediante Google son seguros y se utilizan exclusivamente para gestionar tu carrito y órdenes de compra dentro de DuoStore.</p>
+                <h3><i class="fa-solid fa-shield-cat"></i> 1. Autenticación y Datos</h3>
+                <p>Utilizamos el inicio de sesión oficial de Google OAuth 2.0 para verificar tu identidad de forma segura. No almacenamos credenciales ni contraseñas en nuestros servidores.</p>
                 
-                <h3>2. Envíos y Entregas</h3>
-                <p>Realizamos envíos a nivel nacional e internacional de productos físicos y entrega inmediata de activos digitales tras la verificación del pago.</p>
+                <h3><i class="fa-solid fa-box-open"></i> 2. Envíos y Garantías</h3>
+                <p>Los productos físicos cuentan con empaque especializado anti-impactos y seguimiento en tiempo real. Los artículos digitales se despachan automáticamente tras la confirmación de pago.</p>
                 
-                <h3>3. Reembolsos</h3>
-                <p>Cuentas con hasta 14 días naturales para solicitar devoluciones en caso de defectos de fábrica o inconvenientes con artículos digitales.</p>
+                <h3><i class="fa-solid fa-rotate-left"></i> 3. Devoluciones</h3>
+                <p>Garantía de reembolso de 14 días en caso de fallas de fábrica debidamente comprobadas.</p>
             </div>
         </section>
     </main>
 
-    <!-- Modal de Pago -->
+    <!-- Vista: Contacto y Redes Sociales -->
+    <main id="view-contacto" class="view" style="display: none;">
+        <section class="contact-container">
+            <div class="section-title">
+                <h2>Canales de Contacto Oficiales</h2>
+                <p>¿Tienes dudas o necesitas soporte directo? Escríbenos por cualquiera de nuestros medios.</p>
+            </div>
+            <div class="social-grid">
+                <a href="https://instagram.com/duo19.13" target="_blank" class="social-card instagram">
+                    <i class="fa-brands fa-instagram"></i>
+                    <div>
+                        <h3>Instagram</h3>
+                        <p>@duo19.13</p>
+                    </div>
+                </a>
+                <a href="https://wa.me/5493329540457" target="_blank" class="social-card whatsapp">
+                    <i class="fa-brands fa-whatsapp"></i>
+                    <div>
+                        <h3>WhatsApp Directo</h3>
+                        <p>+54 9 3329 54-0457</p>
+                    </div>
+                </a>
+                <a href="mailto:rodrygoorellano825@gmail.com" class="social-card email">
+                    <i class="fa-solid fa-envelope"></i>
+                    <div>
+                        <h3>Correo Electrónico</h3>
+                        <p>rodrygoorellano825@gmail.com</p>
+                    </div>
+                </a>
+            </div>
+        </section>
+    </main>
+
+    <!-- Modal de Pago Profesional -->
     <div id="checkoutModal" class="modal" style="display: none;">
         <div class="modal-content">
             <span class="close-btn" onclick="closeCheckout()">&times;</span>
-            <h2>Finalizar Compra 💳</h2>
+            <h2>Pasarela de Pago Segura 💳</h2>
             <p id="checkoutProductTitle" class="checkout-product-title"></p>
             <form onsubmit="processPayment(event)">
                 <div class="form-group">
-                    <label>Selecciona Método de Pago:</label>
+                    <label>Método de Pago</label>
                     <select id="paymentMethod" class="form-control" onchange="togglePaymentFields()">
                         <option value="card">Tarjeta de Crédito / Débito</option>
-                        <option value="mercado_pago">Mercado Pago / Billetera Virtual</option>
+                        <option value="mercado_pago">Mercado Pago</option>
                         <option value="crypto">Criptomonedas (USDT / BTC)</option>
                     </select>
                 </div>
                 <div id="cardFields">
                     <div class="form-group">
-                        <label>Número de Tarjeta:</label>
-                        <input type="text" placeholder="1234 5678 9012 3456" maxlength="19">
+                        <label>Número de Tarjeta</label>
+                        <input type="text" placeholder="•••• •••• •••• ••••" maxlength="19">
                     </div>
                     <div class="form-row">
                         <div class="form-group">
-                            <label>Vencimiento:</label>
+                            <label>Vencimiento</label>
                             <input type="text" placeholder="MM/AA" maxlength="5">
                         </div>
                         <div class="form-group">
-                            <label>CVV:</label>
-                            <input type="password" placeholder="123" maxlength="4">
+                            <label>CVV</label>
+                            <input type="password" placeholder="•••" maxlength="4">
                         </div>
                     </div>
                 </div>
-                <button type="submit" class="btn-primary btn-pay">Pagar Ahora</button>
+                <button type="submit" class="btn-glow btn-full">Completar Transacción</button>
             </form>
         </div>
     </div>
 
-    <!-- Pie de página -->
+    <!-- Footer Moderno -->
     <footer class="footer">
-        <p>&copy; 2026 DuoStore. Todos los derechos reservados. Diseñado para gamers.</p>
+        <div class="footer-content">
+            <p>&copy; 2026 DuoStore. Todos los derechos reservados.</p>
+            <div class="footer-socials">
+                <a href="https://instagram.com/duo19.13" target="_blank"><i class="fa-brands fa-instagram"></i></a>
+                <a href="https://wa.me/5493329540457" target="_blank"><i class="fa-brands fa-whatsapp"></i></a>
+                <a href="mailto:rodrygoorellano825@gmail.com"><i class="fa-solid fa-envelope"></i></a>
+            </div>
+        </div>
     </footer>
 
+    <!-- Firebase SDKs para Autenticación Real con Google -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
