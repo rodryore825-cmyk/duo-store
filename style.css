@@ -1,360 +1,202 @@
-:root {
-    --bg-main: #0b0f19;
-    --bg-card: #131c2e;
-    --bg-header: #0f172a;
-    --border-color: #1e293b;
-    --text-main: #f1f5f9;
-    --text-muted: #94a3b8;
-    --accent: #38bdf8;
-    --accent-hover: #0ea5e9;
+// Configuración de Firebase (Sustituye con tus credenciales gratuitas de Firebase Console)
+const firebaseConfig = {
+    apiKey: "TU_API_KEY_DE_FIREBASE",
+    authDomain: "tu-proyecto.firebaseapp.com",
+    projectId: "tu-proyecto",
+    storageBucket: "tu-proyecto.appspot.com",
+    messagingSenderId: "TU_SENDER_ID",
+    appId: "TU_APP_ID"
+};
+
+// Inicializar Firebase
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+
+let currentUser = null;
+let currentSelectedProduct = null;
+const ADMIN_EMAIL = "rodrigoorellano825@gmail.com";
+
+// Catálogo inicial
+let products = [
+    {
+        name: "Micrófono K9 Inalámbrico",
+        desc: "Ideal para streaming y videollamadas con conexión USB-C.",
+        price: 25.00,
+        img: "https://images.unsplash.com/photo-1590602847861-f357a9332bbc?auto=format&fit=crop&w=600&q=80"
+    },
+    {
+        name: "Pack Coleccionable AOT",
+        desc: "Artículos y accesorios exclusivos de edición limitada.",
+        price: 45.00,
+        img: "https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?auto=format&fit=crop&w=600&q=80"
+    },
+    {
+        name: "Mousepad Gaming RGB XL",
+        desc: "Superficie optimizada con iluminación LED ajustable.",
+        price: 30.00,
+        img: "https://images.unsplash.com/photo-1615663245857-ac93bb7c39e7?auto=format&fit=crop&w=600&q=80"
+    }
+];
+
+document.addEventListener("DOMContentLoaded", () => {
+    renderCatalog();
+    initCarousel();
+
+    // Observador de estado de autenticación real de Google
+    auth.onAuthStateChanged((user) => {
+        if (user) {
+            currentUser = user;
+            updateUIAfterLogin(user);
+        } else {
+            currentUser = null;
+            updateUIAfterLogout();
+        }
+    });
+});
+
+/* Autenticación Real con Google */
+function loginWithGoogle() {
+    const provider = new firebase.auth.GoogleAuthProvider();
+    auth.signInWithPopup(provider).catch((error) => {
+        console.error("Error en autenticación:", error.message);
+        alert("Hubo un error al iniciar sesión con Google.");
+    });
 }
 
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+function logout() {
+    auth.signOut().then(() => {
+        toggleDropdown();
+        alert("Has cerrado sesión correctamente.");
+    });
 }
 
-body {
-    background-color: var(--bg-main);
-    color: var(--text-main);
-    line-height: 1.6;
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
+function updateUIAfterLogin(user) {
+    document.getElementById("googleLoginBtn").style.display = "none";
+    const dropdown = document.getElementById("userDropdown");
+    dropdown.style.display = "inline-block";
+
+    document.getElementById("userNameDisplay").innerText = user.displayName.split(" ")[0];
+    document.getElementById("userEmailDisplay").innerText = user.email;
+    document.getElementById("userAvatar").src = user.photoURL || "https://www.svgrepo.com/show/382109/male-avatar.svg";
+
+    // Validar si es el administrador único
+    if (user.email === ADMIN_EMAIL) {
+        document.getElementById("adminNavLink").style.display = "flex";
+    }
 }
 
-/* Header */
-.header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 1rem 5%;
-    background-color: var(--bg-header);
-    border-bottom: 1px solid var(--border-color);
-    position: sticky;
-    top: 0;
-    z-index: 100;
+function updateUIAfterLogout() {
+    document.getElementById("googleLoginBtn").style.display = "flex";
+    document.getElementById("userDropdown").style.display = "none";
+    document.getElementById("adminNavLink").style.display = "none";
 }
 
-.logo {
-    font-size: 1.25rem;
-    font-weight: 700;
-    color: var(--accent);
-    cursor: pointer;
-    letter-spacing: 0.5px;
+/* Control del Menú Desplegable */
+function toggleDropdown() {
+    const content = document.getElementById("dropdownContent");
+    content.classList.toggle("show");
 }
 
-.nav a {
-    color: var(--text-muted);
-    text-decoration: none;
-    margin-left: 1.5rem;
-    font-size: 0.95rem;
-    transition: color 0.2s ease;
+window.onclick = function(event) {
+    if (!event.target.closest('.auth-container')) {
+        const dropdowns = document.getElementsByClassName("dropdown-content");
+        for (let i = 0; i < dropdowns.length; i++) {
+            let openDropdown = dropdowns[i];
+            if (openDropdown.classList.contains('show')) {
+                openDropdown.classList.remove('show');
+            }
+        }
+    }
 }
 
-.nav a:hover {
-    color: var(--accent);
+/* Control de Vistas */
+function switchView(viewName) {
+    document.querySelectorAll(".view").forEach(view => {
+        view.style.display = "none";
+    });
+    document.getElementById(`view-${viewName}`).style.display = "block";
+    window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-/* Auth Buttons */
-.google-btn {
-    background-color: #ffffff;
-    color: #1e293b;
-    border: none;
-    padding: 0.5rem 1rem;
-    border-radius: 6px;
-    font-weight: 600;
-    font-size: 0.85rem;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    transition: background 0.2s;
+/* Carrusel Automático (Exactamente 7 segundos) */
+function initCarousel() {
+    const track = document.getElementById("mainCarousel");
+    if (!track) return;
+    const slides = track.querySelectorAll(".carousel-slide");
+    let currentIndex = 0;
+
+    setInterval(() => {
+        currentIndex = (currentIndex + 1) % slides.length;
+        track.style.transform = `translateX(-${currentIndex * 100}%)`;
+    }, 7000); // 7000 milisegundos = 7 segundos
 }
 
-.google-btn img {
-    width: 16px;
-    height: 16px;
+/* Renderizar Catálogo */
+function renderCatalog() {
+    const grid = document.getElementById("productGrid");
+    grid.innerHTML = "";
+
+    products.forEach((prod, index) => {
+        const card = document.createElement("div");
+        card.className = "card";
+        card.innerHTML = `
+            <img src="${prod.img}" alt="${prod.name}" class="card-img">
+            <div class="card-body">
+                <h3>${prod.name}</h3>
+                <p>${prod.desc}</p>
+                <span class="price">$${prod.price.toFixed(2)} USD</span>
+                <button class="btn-glow btn-full" onclick="openCheckout(${index})">Comprar Ahora</button>
+            </div>
+        `;
+        grid.appendChild(card);
+    });
 }
 
-.google-btn:hover {
-    background-color: #e2e8f0;
+/* Panel de Administración (Solo Admin) */
+function addNewProduct(e) {
+    e.preventDefault();
+    if (!currentUser || currentUser.email !== ADMIN_EMAIL) {
+        alert("Acceso denegado. Solo el administrador puede agregar productos.");
+        return;
+    }
+
+    const name = document.getElementById("prodName").value;
+    const desc = document.getElementById("prodDesc").value;
+    const price = parseFloat(document.getElementById("prodPrice").value);
+    const img = document.getElementById("prodImg").value;
+
+    products.push({ name, desc, price, img });
+    renderCatalog();
+    
+    document.getElementById("addProductForm").reset();
+    alert("¡Producto publicado con éxito en el catálogo!");
+    switchView("catalogo");
 }
 
-.user-profile {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    font-size: 0.9rem;
+/* Pasarela de Pagos */
+function openCheckout(index) {
+    if (!currentUser) {
+        alert("Debes iniciar sesión con tu cuenta de Google para realizar una compra.");
+        return;
+    }
+    currentSelectedProduct = products[index];
+    document.getElementById("checkoutProductTitle").innerText = `Producto: ${currentSelectedProduct.name} ($${currentSelectedProduct.price.toFixed(2)})`;
+    document.getElementById("checkoutModal").style.display = "flex";
 }
 
-.logout-btn {
-    background: transparent;
-    border: 1px solid #ef4444;
-    color: #ef4444;
-    padding: 0.3rem 0.8rem;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 0.8rem;
-    transition: all 0.2s;
+function closeCheckout() {
+    document.getElementById("checkoutModal").style.display = "none";
 }
 
-.logout-btn:hover {
-    background-color: #ef4444;
-    color: #fff;
+function togglePaymentFields() {
+    const method = document.getElementById("paymentMethod").value;
+    const cardFields = document.getElementById("cardFields");
+    cardFields.style.display = (method === "card") ? "block" : "none";
 }
 
-/* Carrusel Principal (Cada 7 segundos) */
-.hero-carousel {
-    position: relative;
-    width: 100%;
-    height: 70vh;
-    overflow: hidden;
-}
-
-.carousel-track {
-    display: flex;
-    width: 100%;
-    height: 100%;
-    transition: transform 0.8s ease-in-out;
-}
-
-.carousel-slide {
-    min-width: 100%;
-    height: 100%;
-    background-size: cover;
-    background-position: center;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-}
-
-.slide-content h1 {
-    font-size: 2.8rem;
-    margin-bottom: 0.8rem;
-    color: #ffffff;
-    font-weight: 800;
-}
-
-.slide-content p {
-    font-size: 1.1rem;
-    color: var(--text-muted);
-}
-
-/* Vistas y Contenedores */
-.view {
-    flex: 1;
-    padding: 3rem 5%;
-    max-width: 1200px;
-    margin: 0 auto;
-    width: 100%;
-}
-
-.catalog-container h2, .admin-panel h2, .policies-container h2 {
-    margin-bottom: 1.5rem;
-    font-size: 1.8rem;
-    font-weight: 700;
-}
-
-/* Grid de Productos */
-.grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-    gap: 1.5rem;
-}
-
-.card {
-    background-color: var(--bg-card);
-    border: 1px solid var(--border-color);
-    border-radius: 10px;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    transition: transform 0.2s, box-shadow 0.2s;
-}
-
-.card:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
-}
-
-.card-img {
-    width: 100%;
-    height: 180px;
-    object-fit: cover;
-}
-
-.card-body {
-    padding: 1.2rem;
-    display: flex;
-    flex-direction: column;
-    flex: 1;
-}
-
-.card-body h3 {
-    font-size: 1.1rem;
-    margin-bottom: 0.5rem;
-}
-
-.card-body p {
-    color: var(--text-muted);
-    font-size: 0.85rem;
-    margin-bottom: 1rem;
-    flex: 1;
-}
-
-.price {
-    font-size: 1.15rem;
-    font-weight: bold;
-    color: var(--accent);
-    margin-bottom: 1rem;
-}
-
-.buy-btn {
-    background-color: var(--accent);
-    color: var(--bg-main);
-    border: none;
-    padding: 0.6rem;
-    border-radius: 6px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background 0.2s;
-}
-
-.buy-btn:hover {
-    background-color: var(--accent-hover);
-}
-
-/* Panel Admin */
-.admin-panel {
-    max-width: 600px;
-    margin: 0 auto;
-    background: var(--bg-card);
-    padding: 2rem;
-    border-radius: 12px;
-    border: 1px solid var(--border-color);
-}
-
-.admin-subtitle {
-    color: var(--text-muted);
-    font-size: 0.9rem;
-    margin-bottom: 1.5rem;
-}
-
-.form-group {
-    margin-bottom: 1.2rem;
-}
-
-.form-group label {
-    display: block;
-    font-size: 0.85rem;
-    margin-bottom: 0.4rem;
-    color: var(--text-muted);
-}
-
-.form-group input, .form-group select {
-    width: 100%;
-    padding: 0.7rem;
-    border-radius: 6px;
-    border: 1px solid var(--border-color);
-    background-color: var(--bg-main);
-    color: var(--text-main);
-    font-size: 0.95rem;
-}
-
-.form-row {
-    display: flex;
-    gap: 1rem;
-}
-
-.btn-primary {
-    background-color: var(--accent);
-    color: var(--bg-main);
-    border: none;
-    padding: 0.8rem;
-    border-radius: 6px;
-    font-weight: bold;
-    cursor: pointer;
-    width: 100%;
-    transition: background 0.2s;
-}
-
-.btn-primary:hover {
-    background-color: var(--accent-hover);
-}
-
-/* Políticas */
-.policy-box {
-    background-color: var(--bg-card);
-    padding: 2rem;
-    border-radius: 10px;
-    border: 1px solid var(--border-color);
-}
-
-.policy-box h3 {
-    color: var(--accent);
-    margin-top: 1rem;
-    margin-bottom: 0.4rem;
-    font-size: 1rem;
-}
-
-.policy-box p {
-    color: var(--text-muted);
-    font-size: 0.9rem;
-}
-
-/* Modal de Pago */
-.modal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.7);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 1000;
-}
-
-.modal-content {
-    background-color: var(--bg-card);
-    padding: 2rem;
-    border-radius: 12px;
-    width: 90%;
-    max-width: 420px;
-    border: 1px solid var(--border-color);
-    position: relative;
-}
-
-.close-btn {
-    position: absolute;
-    top: 15px;
-    right: 20px;
-    font-size: 1.5rem;
-    color: var(--text-muted);
-    cursor: pointer;
-}
-
-.checkout-product-title {
-    color: var(--accent);
-    margin-bottom: 1.2rem;
-    font-weight: 600;
-}
-
-.btn-pay {
-    margin-top: 1rem;
-}
-
-/* Footer */
-.footer {
-    text-align: center;
-    padding: 1.5rem;
-    background-color: var(--bg-header);
-    border-top: 1px solid var(--border-color);
-    color: var(--text-muted);
-    font-size: 0.85rem;
+function processPayment(e) {
+    e.preventDefault();
+    const method = document.getElementById("paymentMethod").value;
+    alert(`¡Transacción completada con éxito vía ${method.toUpperCase()}! Gracias por tu compra, ${currentUser.displayName}.`);
+    closeCheckout();
 }
