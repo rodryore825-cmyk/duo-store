@@ -3,55 +3,144 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Duo Store 🎮 - Gaming & Merchandise</title>
+    <title>DuoStore 🎮 - Gaming & Merchandise</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <!-- Encabezado -->
     <header class="header">
-        <div class="logo">DuoStore 🎮</div>
+        <div class="logo" onclick="switchView('inicio')">DuoStore 🎮</div>
         <nav class="nav">
-            <a href="#inicio">Inicio</a>
-            <a href="#catalogo">Catálogo</a>
-            <a href="#contacto">Contacto</a>
+            <a href="#" onclick="switchView('inicio')">Inicio</a>
+            <a href="#" onclick="switchView('catalogo')">Catálogo</a>
+            <a href="#" onclick="switchView('admin')">Panel Admin</a>
+            <a href="#" onclick="switchView('politicas')">Políticas</a>
         </nav>
-    </header>
-
-    <!-- Sección Hero -->
-    <section id="inicio" class="hero">
-        <h1>Nivel Up Your Setup</h1>
-        <p>Encuentra los mejores accesorios, merchandising y coleccionables gaming.</p>
-        <a href="#catalogo" class="btn">Ver Catálogo</a>
-    </section>
-
-    <!-- Catálogo de Productos -->
-    <section id="catalogo" class="catalog">
-        <h2>Productos Destacados</h2>
-        <div class="grid">
-            <div class="card">
-                <h3>Micrófono K9 Inalámbrico</h3>
-                <p>Ideal para streaming y videollamadas con conexión USB-C.</p>
-                <span class="price">$25.00</span>
-                <button class="buy-btn">Añadir al Carrito</button>
-            </div>
-            <div class="card">
-                <h3>Pack Coleccionable AOT</h3>
-                <p>Artículos y accesorios exclusivos de edición limitada.</p>
-                <span class="price">$45.00</span>
-                <button class="buy-btn">Añadir al Carrito</button>
-            </div>
-            <div class="card">
-                <h3>Mousepad Gaming RGB XL</h3>
-                <p>Superficie optimizada con iluminación LED ajustable.</p>
-                <span class="price">$30.00</span>
-                <button class="buy-btn">Añadir al Carrito</button>
+        <div class="auth-section">
+            <button id="googleLoginBtn" class="google-btn" onclick="loginWithGoogle()">
+                <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google"> Entrar con Google
+            </button>
+            <div id="userProfile" class="user-profile" style="display: none;">
+                <span id="userName">Usuario</span>
+                <button class="logout-btn" onclick="logout()">Salir</button>
             </div>
         </div>
-    </section>
+    </header>
+
+    <!-- Vista: Inicio (Hero y Carrusel Principal) -->
+    <main id="view-inicio" class="view">
+        <section class="hero-carousel">
+            <div class="carousel-track" id="mainCarousel">
+                <div class="carousel-slide active" style="background-image: linear-gradient(rgba(15, 23, 42, 0.6), rgba(15, 23, 42, 0.8)), url('https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=1200&q=80')">
+                    <div class="slide-content">
+                        <h1>Nivel Up Your Setup</h1>
+                        <p>Los mejores accesorios y equipo profesional para gamers.</p>
+                    </div>
+                </div>
+                <div class="carousel-slide" style="background-image: linear-gradient(rgba(15, 23, 42, 0.6), rgba(15, 23, 42, 0.8)), url('https://images.unsplash.com/photo-1612287233202-b51e3ed61f15?auto=format&fit=crop&w=1200&q=80')">
+                    <div class="slide-content">
+                        <h1>Merch Oficial Exclusiva</h1>
+                        <p>Coleccionables, indumentaria y figuras de edición limitada.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="carousel-indicators" id="carouselIndicators"></div>
+        </section>
+    </main>
+
+    <!-- Vista: Catálogo de Productos -->
+    <main id="view-catalogo" class="view" style="display: none;">
+        <section class="catalog-container">
+            <h2>Catálogo Disponible</h2>
+            <div class="grid" id="productGrid">
+                <!-- Los productos se cargan dinámicamente (incluyendo los del admin) -->
+            </div>
+        </section>
+    </main>
+
+    <!-- Vista: Panel de Administración -->
+    <main id="view-admin" class="view" style="display: none;">
+        <section class="admin-panel">
+            <h2>Panel de Administración 🛠️</h2>
+            <p class="admin-subtitle">Agrega nuevos productos al catálogo en tiempo real.</p>
+            <form id="addProductForm" onsubmit="addNewProduct(event)">
+                <div class="form-group">
+                    <label>Nombre del Producto:</label>
+                    <input type="text" id="prodName" required placeholder="Ej. Teclado Mecánico RGB">
+                </div>
+                <div class="form-group">
+                    <label>Descripción:</label>
+                    <input type="text" id="prodDesc" required placeholder="Ej. Switches Blue, formato TKL.">
+                </div>
+                <div class="form-group">
+                    <label>Precio ($ USD):</label>
+                    <input type="number" id="prodPrice" required placeholder="59.99">
+                </div>
+                <div class="form-group">
+                    <label>URL de Imagen (para carrusel opcional):</label>
+                    <input type="url" id="prodImg" required placeholder="https://imagen.com/foto.jpg">
+                </div>
+                <button type="submit" class="btn-primary">Guardar Producto</button>
+            </form>
+        </section>
+    </main>
+
+    <!-- Vista: Políticas y Términos -->
+    <main id="view-politicas" class="view" style="display: none;">
+        <section class="policies-container">
+            <h2>Políticas de Privacidad y Compra</h2>
+            <div class="policy-box">
+                <h3>1. Privacidad de Datos</h3>
+                <p>Tus datos de inicio de sesión mediante Google son seguros y se utilizan exclusivamente para gestionar tu carrito y órdenes de compra dentro de DuoStore.</p>
+                
+                <h3>2. Envíos y Entregas</h3>
+                <p>Realizamos envíos a nivel nacional e internacional de productos físicos y entrega inmediata de activos digitales tras la verificación del pago.</p>
+                
+                <h3>3. Reembolsos</h3>
+                <p>Cuentas con hasta 14 días naturales para solicitar devoluciones en caso de defectos de fábrica o inconvenientes con artículos digitales.</p>
+            </div>
+        </section>
+    </main>
+
+    <!-- Modal de Pago -->
+    <div id="checkoutModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeCheckout()">&times;</span>
+            <h2>Finalizar Compra 💳</h2>
+            <p id="checkoutProductTitle" class="checkout-product-title"></p>
+            <form onsubmit="processPayment(event)">
+                <div class="form-group">
+                    <label>Selecciona Método de Pago:</label>
+                    <select id="paymentMethod" class="form-control" onchange="togglePaymentFields()">
+                        <option value="card">Tarjeta de Crédito / Débito</option>
+                        <option value="mercado_pago">Mercado Pago / Billetera Virtual</option>
+                        <option value="crypto">Criptomonedas (USDT / BTC)</option>
+                    </select>
+                </div>
+                <div id="cardFields">
+                    <div class="form-group">
+                        <label>Número de Tarjeta:</label>
+                        <input type="text" placeholder="1234 5678 9012 3456" maxlength="19">
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Vencimiento:</label>
+                            <input type="text" placeholder="MM/AA" maxlength="5">
+                        </div>
+                        <div class="form-group">
+                            <label>CVV:</label>
+                            <input type="password" placeholder="123" maxlength="4">
+                        </div>
+                    </div>
+                </div>
+                <button type="submit" class="btn-primary btn-pay">Pagar Ahora</button>
+            </form>
+        </div>
+    </div>
 
     <!-- Pie de página -->
-    <footer id="contacto" class="footer">
-        <p>&copy; 2026 Duo Store. Todos los derechos reservados.</p>
+    <footer class="footer">
+        <p>&copy; 2026 DuoStore. Todos los derechos reservados. Diseñado para gamers.</p>
     </footer>
 
     <script src="script.js"></script>
