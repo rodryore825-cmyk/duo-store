@@ -1,6 +1,59 @@
-duo-store/
-├── index.html          # Página principal con catálogo de productos y diseño moderno
-├── style.css           # Estilos visuales (modo oscuro, diseño responsivo, tarjetas)
-├── script.js           # Lógica interactiva (carrito de compras, filtros con Intersection Observer)
-├── assets/             # Carpeta para imágenes y recursos visuales
-└── README.md           # Documentación del proyecto
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Duo Store 🎮 - Gaming & Merchandise</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Encabezado -->
+    <header class="header">
+        <div class="logo">DuoStore 🎮</div>
+        <nav class="nav">
+            <a href="#inicio">Inicio</a>
+            <a href="#catalogo">Catálogo</a>
+            <a href="#contacto">Contacto</a>
+        </nav>
+    </header>
+
+    <!-- Sección Hero -->
+    <section id="inicio" class="hero">
+        <h1>Nivel Up Your Setup</h1>
+        <p>Encuentra los mejores accesorios, merchandising y coleccionables gaming.</p>
+        <a href="#catalogo" class="btn">Ver Catálogo</a>
+    </section>
+
+    <!-- Catálogo de Productos -->
+    <section id="catalogo" class="catalog">
+        <h2>Productos Destacados</h2>
+        <div class="grid">
+            <div class="card">
+                <h3>Micrófono K9 Inalámbrico</h3>
+                <p>Ideal para streaming y videollamadas con conexión USB-C.</p>
+                <span class="price">$25.00</span>
+                <button class="buy-btn">Añadir al Carrito</button>
+            </div>
+            <div class="card">
+                <h3>Pack Coleccionable AOT</h3>
+                <p>Artículos y accesorios exclusivos de edición limitada.</p>
+                <span class="price">$45.00</span>
+                <button class="buy-btn">Añadir al Carrito</button>
+            </div>
+            <div class="card">
+                <h3>Mousepad Gaming RGB XL</h3>
+                <p>Superficie optimizada con iluminación LED ajustable.</p>
+                <span class="price">$30.00</span>
+                <button class="buy-btn">Añadir al Carrito</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pie de página -->
+    <footer id="contacto" class="footer">
+        <p>&copy; 2026 Duo Store. Todos los derechos reservados.</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
